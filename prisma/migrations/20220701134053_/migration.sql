@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Agence" ALTER COLUMN "logo" SET DATA TYPE TEXT;

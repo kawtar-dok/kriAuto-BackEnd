@@ -1,0 +1,23 @@
+{
+  "name": "kriauto_itou",
+  "version": "1.0.0",
+  "description": "Plateform de location de voiture multi-agences",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Rental",
+    "Cars"
+  ],
+  "author": "kawtar itoujane",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^4.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "nodemon": "^2.0.16",
+    "prisma": "^3.14.0"
+  }
+}

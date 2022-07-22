@@ -1,0 +1,173 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+
+  idAdmin      String   @id @default(cuid())
+  username     String
+  password     String
+  firstname    String
+  lastname     String
+  sexe         String
+  age          Int
+  telephone    String
+  city         String
+  email        String
+  registerDate DateTime @default(now())
+}
+
+model AdminAg {
+
+  idAdminAg    String   @id @default(cuid())
+  username     String
+  password     String
+  firstname    String
+  lastname     String
+  sexe         String
+  age          Int
+  telephone    String
+  city         String
+  email        String
+  registerDate DateTime @default(now())
+  agence       Agence?
+}
+
+model Client {
+
+  idClient     String        @id @default(cuid())
+  username     String
+  password     String
+  firstname    String
+  lastname     String
+  balance     Int          @default(0)
+  sexe         String
+  age          Int
+  telephone    String
+  city         String
+  email        String
+  registerDate DateTime      @default(now())
+  reservations Reservation[]
+  pieceJointe  PieceJointe?
+}
+
+model Reservation {
+
+  idReservation String   @id @default(cuid())
+  dateDebut     DateTime @default(now()) @db.Date
+  dateFin       DateTime @db.Date
+  heureDebut    DateTime @default(now()) @db.Time
+  heureFin      DateTime @db.Time
+  villeDepart   String
+  villeRetour   String
+  statut        String
+  client        Client?  @relation(fields: [idClient], references: [idClient])
+  idClient      String?
+  agence        Agence?  @relation(fields: [idAgence], references: [idAgence])
+  idAgence      String?
+  modele        Modele?  @relation(fields: [idModele], references: [idModele])
+  idModele      String?
+}
+
+model PieceJointe {
+
+  idPieceJointe     String @id @default(cuid())
+  pieceIdentifiante Bytes  @db.ByteA
+  piecePermis       Bytes  @db.ByteA
+  client            Client @relation(fields: [idClient], references: [idClient])
+  idClient          String @unique
+}
+
+model Ville {
+  idVille       String  @id @default(cuid())
+  nomVille      String
+  prixVilleJour Float
+  Tarif         Tarif[]
+}
+
+model Modele {
+  idModele           String             @id @default(cuid())
+  nameModele         String
+  image             String?
+  marque             String
+  typeMoteur         String
+  capacity           Int
+  boiteVitesse       String
+  carburant          String
+  Available          Boolean
+  reservations       Reservation[]
+  categorieTarifaire CategorieTarifaire @relation(fields: [idCategorieTarif], references: [idCategorieTarif])
+  idCategorieTarif   String
+}
+
+model Agence {
+  idAgence           String              @id @default(cuid())
+  nameAgence         String
+  logo               String
+  telephoneAg        String
+  emailAg            String
+  adminAg            AdminAg             @relation(fields: [idAdminAg], references: [idAdminAg])
+  idAdminAg          String              @unique
+  reservations       Reservation[]
+  categorieTarifaire CategorieTarifaire?
+  extra              Extra?
+  fraisAbonndon      FraisAbonndon?
+}
+
+model CategorieTarifaire {
+  idCategorieTarif String   @id @default(cuid())
+  nomCategorie     String
+  prix             String
+  agence           Agence   @relation(fields: [idAgence], references: [idAgence])
+  idAgence         String   @unique
+  Tarif            Tarif[]
+  modele           Modele[]
+}
+
+model Extra {
+  idExtra     String  @id @default(cuid())
+  SiegeEnfant Int     @default(0)
+  Clima       Boolean
+  agence      Agence  @relation(fields: [idAgence], references: [idAgence])
+  idAgence    String  @unique
+
+}
+
+model FraisAbonndon {
+  idFraisAbonndon     String @id @default(cuid())
+  prixDepotAutreVille Float
+  agence              Agence @relation(fields: [idAgence], references: [idAgence])
+  idAgence            String @unique
+}
+
+model Periode {
+  idPeriod String  @id @default(cuid())
+  saison   String
+  Tarif    Tarif[]
+}
+
+model Duree {
+  idDuree String  @id @default(cuid())
+  Tarif   Tarif[]
+}
+
+model Tarif {
+  idTarif            String             @id @default(cuid())
+  periode            Periode            @relation(fields: [idPeriod], references: [idPeriod])
+  duree              Duree              @relation(fields: [idDuree], references: [idDuree])
+  categorieTarifaire CategorieTarifaire @relation(fields: [idCategorieTarif], references: [idCategorieTarif])
+  ville              Ville              @relation(fields: [idVille], references: [idVille])
+  total              Float
+  idPeriod           String
+  idDuree            String
+  idCategorieTarif   String
+  idVille            String
+}
